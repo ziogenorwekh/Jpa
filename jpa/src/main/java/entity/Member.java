@@ -47,20 +47,52 @@ public class Member {
     private Locker locker;
 
     // @JoinTable.name : 연결 테이블을 지정한다. 여기서는 MEMBER_PRODUCT 테이블을 선택했다.
-    // @JoinTable.joinColumns : 현재 방향인 회원과 매핑할 조인 컬럼 정보를 지정한다. MEMBER_ID 로 지정했다.
-    // @JoinTable.inverseJoinColumns : 반대 방향인 상품과 매핑할 조인 컬럼 정보를 지정한다. PRODUCT_ID로 지정했다.
-    @ManyToMany
-    @JoinTable(name = "MEMBER_PRODUCT", joinColumns = @JoinColumn(name = "MEMBER_ID"),
-            inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID"))
-    private List<Product> products = new ArrayList<>();
+    // @JoinTable.joinColumns : 현재 방향인 회원과 매핑할 조인 컬럼 정보를 지정한다.
+    // MEMBER_ID 로 지정했다.
+    // @JoinTable.inverseJoinColumns : 반대 방향인 상품과 매핑할 조인 컬럼 정보를 지정한다.
+    // PRODUCT_ID로 지정했다.
+//    @ManyToMany
+//    @JoinTable(name = "MEMBER_PRODUCT", joinColumns = @JoinColumn(name = "MEMBER_ID"),
+//            inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID"))
+//    private List<Product> products = new ArrayList<>();
 
-    public List<Product> getProducts() {
-         return products;
+//    public List<Product> getProducts() {
+//         return products;
+//    }
+//
+//    public void setProducts(List<Product> products) {
+//        this.products = products;
+//    }
+
+    // 대리 키를 사용함으로써 식별 관계에 복합 키를 사용하는 것보다 매핑이 단순해졌다.
+    @OneToMany(mappedBy = "member")
+    private List<Order> orders = new ArrayList<>();
+
+    public List<Order> getOrders() {
+        return orders;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
+
+    // 다대다 매핑은 실무에서는 잘 사용하지 않으므로(제약 사항이 있기에) OneToMany 로 풀어야 한다.
+//    @OneToMany(mappedBy = "member")
+//    private List<MemberProduct> memberProducts;
+
+//    public void addProduct(Product product) {
+//        products.add(product);
+//        product.getMembers().add(this);
+//    }
+
+//
+//    public List<MemberProduct> getMemberProducts() {
+//        return memberProducts;
+//    }
+
+//    public void setMemberProducts(List<MemberProduct> memberProducts) {
+//        this.memberProducts = memberProducts;
+//    }
 
     public Locker getLocker() {
 

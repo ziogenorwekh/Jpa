@@ -7,7 +7,7 @@
 /dataSources/
 /dataSources.local.xml
 # DB in META-INF/persistence.xml
-/META-INF
+#/META-INF
 persistence.xml
 # ./idea
 /.idea
