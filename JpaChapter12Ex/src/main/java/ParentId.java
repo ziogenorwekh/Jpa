@@ -1,6 +1,7 @@
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 public class ParentId implements Serializable {
@@ -37,12 +38,15 @@ public class ParentId implements Serializable {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(id1, id2);
     }
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        ParentId parentId = (ParentId) obj;
+        return id1 == parentId.id1 && Objects.equals(id2, parentId.id2);
     }
 
     @Override

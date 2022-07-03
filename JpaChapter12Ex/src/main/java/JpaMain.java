@@ -16,8 +16,9 @@ public class JpaMain {
 
         try {
             tx.begin();
-            save();
-            find();
+            embeddedKey();
+//            save();
+//            find();
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
@@ -40,5 +41,12 @@ public class JpaMain {
         Parent parent = em.find(Parent.class, parentId);
 
         System.out.println("parent = " + parent);
+    }
+
+    public static void embeddedKey() {
+        ParentId parentId = new ParentId("id1", "id2");
+        ParentId parentId1 = new ParentId("id1", "id2");
+        boolean equals = parentId.equals(parentId1);
+        System.out.println(equals ? "참" : "거짓");
     }
 }
