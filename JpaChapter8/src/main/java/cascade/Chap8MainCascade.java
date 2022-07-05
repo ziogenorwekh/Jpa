@@ -40,6 +40,6 @@ public class Chap8MainCascade {
     }
 
     public static void orphanFunc() {
-        
+
     }
 }

@@ -12,7 +12,7 @@ public class Parent {
     private Long id;
 
 //        @OneToMany(mappedBy = "parent",cascade = CascadeType.PERSIST) // 영속성 전이
-        @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
     private List<Child> children = new ArrayList<>();
 
     public List<Child> getChildren() {
