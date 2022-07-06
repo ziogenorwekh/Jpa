@@ -33,7 +33,7 @@ public class CriteriaMain {
         }
     }
     private static void save() {
-        Member member = new Member("jpa", "lsek2");
+        Member member = new Member("jpa", "lsek2",13);
         em.persist(member);
         em.flush();
         em.clear();
@@ -42,7 +42,9 @@ public class CriteriaMain {
     private static void criteriaFind() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Member> query = cb.createQuery(Member.class);
+
         Root<Member> m = query.from(Member.class); // 조회를 시작할 클래스
+
 
         CriteriaQuery<Member> cq = query.select(m).where(cb.equal(m.get("name"),"lsek2"));
         List<Member> resultList = em.createQuery(cq).getResultList();

@@ -8,6 +8,11 @@ import java.util.List;
 @Entity
 public class Team {
 
+    public Team() {
+
+    }
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
