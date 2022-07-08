@@ -1,14 +1,10 @@
 package criteria;
 
-import jpql.Member;
+import entity.Member;
+import entity.Team;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.*;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 public class CriteriaMain {
@@ -21,8 +17,9 @@ public class CriteriaMain {
 
         try {
             tx.begin();
-            save();
-            criteriaFind();
+            saveMany();
+//            save();
+//            criteriaFind();
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
@@ -52,4 +49,105 @@ public class CriteriaMain {
             System.out.println("member = " + member);
         }
     }
+    private static void saveMany() {
+        for (int i = 1; i < 21; i++) {
+            Member member = new Member("L" + i, "lsek" + (int)(Math.random() * 20), (int) (Math.random() * 30));
+            Team team = new Team();
+            int threeForth = (int) (Math.random() * 3);
+            if(threeForth == 0) {
+                em.persist(member);
+                continue;
+            }
+            if (member.getAge() % 2 == 0) {
+                team.setName("one");
+            } else {
+                team.setName("two");
+            }
+            member.setTeam(team);
+            team.getMembers().add(member);
+            em.persist(member);
+            em.persist(team);
+        }
+    }
+
+    private static void findCriteriaObject() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+
+        Root<Member> m = cq.from(Member.class);
+        cq.multiselect(m.get("name"), m.get("age")).distinct(false);
+        List<Object[]> resultList = em.createQuery(cq).getResultList();
+        for (int i = 0; i < resultList.size(); i++) {
+            for (int j = 0; j < resultList.get(i).length; j++) {
+                Object o = resultList.get(i)[0];
+                Object o1 = resultList.get(i)[1];
+                System.out.println("o = " + o);
+                System.out.println("o1 = " + o1);
+            }
+        }
+    }
+
+    private static void findCriteriaTuple() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cq = cb.createQuery(Tuple.class);
+
+        Root<Member> m = cq.from(Member.class);
+        cq.multiselect(m.get("name").alias("name"), m.get("age").alias("age"));
+
+        List<Tuple> resultList = em.createQuery(cq).getResultList();
+        for (Tuple tuple : resultList) {
+            String username = tuple.get("name", String.class);
+            Integer age = tuple.get("age", Integer.class);
+            System.out.println("age = " + age);
+            System.out.println("username = " + username);
+        }
+    }
+
+    private static void findMemberByTuple() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cq = cb.createQuery(Tuple.class);
+        Root<Member> m = cq.from(Member.class);
+
+        cq.select(cb.tuple(m.alias("m"), m.get("name").alias("username")));
+        List<Tuple> resultList = em.createQuery(cq).getResultList();
+        for (Tuple tuple : resultList) {
+            Member member = tuple.get("m", Member.class);
+            String username = tuple.get("username", String.class);
+
+            System.out.println("member = " + member);
+            System.out.println("username = " + username);
+        }
+    }
+
+    private static void findTeamAndAgeMaxMin() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cq = cb.createQuery(Tuple.class);
+
+        Root<Member> m = cq.from(Member.class);
+
+        Expression maxAge = cb.max(m.<Integer>get("age"));
+        Expression minAge = cb.min(m.<Integer>get("age"));
+
+        cq.multiselect(m.get("team").get("name").alias("teamName"), maxAge.alias("max"), minAge.alias("min"));
+        cq.groupBy(m.get("team").get("name"));
+
+        List<Tuple> resultList = em.createQuery(cq).getResultList();
+        for (Tuple tuple : resultList) {
+            String teamName = tuple.get("teamName", String.class);
+            Integer max = tuple.get("max", Integer.class);
+            Integer min = tuple.get("min", Integer.class);
+            System.out.println("teamName = " + teamName);
+            System.out.println("max = " + max);
+            System.out.println("min = " + min);
+        }
+    }
+
+    private static void findJoin() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cq = cb.createQuery(Tuple.class);
+        Root<Member> m = cq.from(Member.class);
+        Join<Member, Team> t = m.join("team", JoinType.INNER);
+        cq.multiselect(m,t).where(cb.equal((Expression<?>) t.get("name").alias("name"),"one"));
+    }
+
 }

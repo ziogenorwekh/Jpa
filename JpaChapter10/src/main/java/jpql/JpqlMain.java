@@ -1,8 +1,6 @@
 package jpql;
 
-import org.hibernate.annotations.Fetch;
-
-import javax.persistence.*;
+import java.lang.reflect.Member;
 import java.util.List;
 
 @SuppressWarnings("all")
@@ -19,8 +17,12 @@ public class JpqlMain {
             tx.begin();
 //            save();
 //            jpqlFind();
-            saveMany();
-            usingFindGroupHaving();
+//            saveMany();
+//            findCriteriaObject();
+//            findCriteriaTuple();
+//            findMemberByTuple();
+//            findTeamAndAgeMaxMin();
+//            usingFindGroupHaving();
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
@@ -32,26 +34,6 @@ public class JpqlMain {
         }
     }
 
-    private static void saveMany() {
-        for (int i = 1; i < 21; i++) {
-            Member member = new Member("L" + i, "lsek" + (int)(Math.random() * 2), (int) (Math.random() * 30));
-            Team team = new Team();
-            int threeForth = (int) (Math.random() * 3);
-            if(threeForth == 0) {
-                em.persist(member);
-                continue;
-            }
-            if (member.getAge() % 2 == 0) {
-                team.setName("one");
-            } else {
-                team.setName("two");
-            }
-            member.setTeam(team);
-            team.getMembers().add(member);
-            em.persist(member);
-            em.persist(team);
-        }
-    }
 
     private static void usingFindGroupHaving() {
         // new 사용하지 않은 경우에
@@ -119,6 +101,7 @@ public class JpqlMain {
             System.out.println("member = " + member);
         }
     }
+
 }
 
 @SuppressWarnings("all")

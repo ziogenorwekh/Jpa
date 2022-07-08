@@ -1,4 +1,4 @@
-package jpql;
+package entity;
 
 
 import javax.persistence.*;
