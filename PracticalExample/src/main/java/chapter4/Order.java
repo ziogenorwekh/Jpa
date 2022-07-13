@@ -37,7 +37,17 @@ public class Order {
     }
 
     public void setMember(Member member) {
+        if (this.member != null) {
+            this.member.getOrders().remove(this);
+        }
         this.member = member;
+        member.getOrders().add(this);
+    }
+
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
+
     }
 
     public String getId() {

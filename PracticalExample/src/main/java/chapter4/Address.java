@@ -43,4 +43,13 @@ public class Address {
     public boolean equals(Object obj) {
         return super.equals(obj);
     }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "city='" + city + '\'' +
+                ", street='" + street + '\'' +
+                ", zipcode='" + zipcode + '\'' +
+                '}';
+    }
 }
