@@ -1,12 +1,10 @@
 package jpql;
 
 import entity.Member;
+import entity.Post;
 import entity.Team;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.util.List;
 
 @SuppressWarnings("all")
@@ -29,6 +27,8 @@ public class JpqlMain {
 //            findMemberByTuple();
 //            findTeamAndAgeMaxMin();
 //            usingFindGroupHaving();
+//            innerJoin(em);
+            join(em);
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
@@ -105,6 +105,64 @@ public class JpqlMain {
 //        }
         for (Member member : resultList) {
             System.out.println("member = " + member);
+        }
+    }
+
+    private static void innerJoin(EntityManager em) {
+        Team team = new Team();
+        team.setName("TeamA");
+        Member member = new Member();
+        member.setId("memberA");
+        member.setAge(26);
+        member.setName("lsek");
+        member.setTeam(team);
+        Member member1 = new Member();
+        member1.setId("memberB");
+        member1.setName("okh");
+        member1.setAge(24);
+        member1.setTeam(team);
+        em.persist(team);
+        em.persist(member1);
+        em.persist(member);
+        em.flush();
+        em.clear();
+
+        String teamName = "TeamA";
+        List<Member> members = em.createQuery("select m from Member m inner join m.team t where t.name = :teamName")
+                .setParameter("teamName", teamName).getResultList();
+//        System.out.println("findMember = " + findMember);
+        for (Member member2 : members) {
+            System.out.println("member2 = " + member2);
+        }
+    }
+
+    private static void join(EntityManager em) {
+        Member member = new Member();
+        member.setId("o");
+        member.setName("lsek");
+        member.setAge(26);
+        Post post = new Post();
+        post.setId("1p");
+        post.setTitle("hello");
+        post.setDescription("description");
+        post.setMember(member);
+
+        Post post1 = new Post();
+        post1.setId("2p");
+        post1.setTitle("hi");
+        post1.setDescription("hiDescription");
+        post1.setMember(member);
+        em.persist(post);
+        em.persist(post1);
+        em.persist(member);
+
+        em.flush();
+        em.clear();
+        List<Post> resultList = em.createQuery("select p from Post p join p.member m where m.id = :id")
+                .setParameter("id", "o")
+                .getResultList();
+        for (Post post2 : resultList) {
+            System.out.println("post2 = " + post2);
         }
     }
 

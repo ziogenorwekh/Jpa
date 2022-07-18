@@ -1,6 +1,8 @@
 package entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Member {
@@ -22,8 +24,19 @@ public class Member {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "TEAM_ID")
+    @JoinColumn(name = "TEAM_ID",nullable = true)
     private Team team;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<Post> posts = new ArrayList<>();
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
 
     private int age;
 
@@ -40,7 +53,11 @@ public class Member {
     }
 
     public void setTeam(Team team) {
+        if (this.team != null) {
+            this.team.getMembers().remove(this);
+        }
         this.team = team;
+        this.team.getMembers().add(this);
     }
 
     public String getName() {
@@ -67,6 +84,8 @@ public class Member {
                 ", name='" + name + '\'' +
                 ", team=" + team +
                 ", age=" + age +
+                ", posts=" + posts.size() +
                 '}';
     }
+
 }
